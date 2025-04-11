@@ -11,4 +11,6 @@ enum TileType {
     case goal
     case triangleLeft
     case triangleRight
+    case triangleRandom
+    case wall // ← добавлено
 }

@@ -9,6 +9,13 @@ import UIKit
 
 class SettingsViewController: UIViewController {
 
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "background3"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+
     private let customNavBar = CustomNavigationBar(title: "Settings")
     private let historyButton = UIButton()
     private let searchButton = UIButton()
@@ -20,12 +27,18 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Скрытие стандартного навигейшн бара
         navigationController?.setNavigationBarHidden(true, animated: false)
 
-        view.backgroundColor = UIColor(white: 0.98, alpha: 1)
+        // Добавляем фон
+        view.addSubview(backgroundImageView)
+        NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
 
-        // Добавляем кастомный навигейшн бар
+        // Кастомный navigation bar
         customNavBar.translatesAutoresizingMaskIntoConstraints = false
         customNavBar.setBackButtonAction(target: self, action: #selector(backTapped))
         view.addSubview(customNavBar)
@@ -33,13 +46,12 @@ class SettingsViewController: UIViewController {
         setupUI()
         setupSwitchAppearance()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
-    
-    
+
     private func setupUI() {
         // История
         historyButton.setImage(UIImage(named: "icon_history"), for: .normal)
@@ -66,9 +78,14 @@ class SettingsViewController: UIViewController {
         // Labels
         musicLabel.text = "Notifications:"
         songLabel.text = "Music:"
+        let labelFont = UIFont(name: "Copperplate", size: 22) ?? UIFont.boldSystemFont(ofSize: 22)
         [musicLabel, songLabel].forEach {
-            $0.textColor = .orange
-            $0.font = .boldSystemFont(ofSize: 22)
+            $0.textColor = .white
+            $0.font = labelFont
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOffset = CGSize(width: 1, height: 1)
+            $0.layer.shadowRadius = 2
+            $0.layer.shadowOpacity = 0.9
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -103,13 +120,12 @@ class SettingsViewController: UIViewController {
     }
 
     @objc private func backTapped() {
-        navigationController?.popViewController(animated: true)
+        navigationController?.popViewController(animated: false)
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        // Кастомный навигейшн бар
         NSLayoutConstraint.activate([
             customNavBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             customNavBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),

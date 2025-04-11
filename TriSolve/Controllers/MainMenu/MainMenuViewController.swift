@@ -8,29 +8,14 @@
 import UIKit
 
 class MainMenuViewController: UIViewController {
-
-    // MARK: - UI Elements
-
+    
     private let backgroundImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "Background"))
+        let imageView = UIImageView(image: UIImage(named: "background4"))
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-
-    private let logoGameImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "Logo") ?? UIImage(systemName: "photo"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 30
-        imageView.clipsToBounds = true
-        imageView.layer.shadowColor = UIColor.black.cgColor
-        imageView.layer.shadowOpacity = 0.3
-        imageView.layer.shadowOffset = CGSize(width: 0, height: 4)
-        imageView.layer.shadowRadius = 8
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = ""
@@ -44,96 +29,49 @@ class MainMenuViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
-    private let startButton: UIButton = {
+    
+    private let startButton = MainMenuViewController.makeMenuButton(named: "start", action: #selector(startGame))
+    private let levelSelectButton = MainMenuViewController.makeMenuButton(named: "levelselect", action: #selector(openLevelSelect))
+    private let settingsButton = MainMenuViewController.makeMenuButton(named: "settings", action: #selector(openSettings))
+    
+    private let infoButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Начать игру", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Bold", size: 26) ?? UIFont.boldSystemFont(ofSize: 26)
-        button.setTitleColor(.white, for: .normal)
-        button.setBackgroundImage(UIImage(named: "Buttons"), for: .normal)
-        button.layer.cornerRadius = 30
-        button.layer.masksToBounds = true
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.3
-        button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.layer.shadowRadius = 6
+        button.setImage(UIImage(systemName: "info.circle.fill"), for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        button.layer.cornerRadius = 20
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(startGame), for: .touchUpInside)
+        button.addTarget(self, action: #selector(openRules), for: .touchUpInside)
         return button
     }()
-
-    private let levelSelectButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Выбор уровня", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Bold", size: 26) ?? UIFont.boldSystemFont(ofSize: 26)
-        button.setTitleColor(.white, for: .normal)
-        button.setBackgroundImage(UIImage(named: "Buttons"), for: .normal)
-        button.layer.cornerRadius = 30
-        button.layer.masksToBounds = true
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.3
-        button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.layer.shadowRadius = 6
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(openLevelSelect), for: .touchUpInside)
-        return button
-    }()
-
-    private let settingsButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Настройки", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Bold", size: 26) ?? UIFont.boldSystemFont(ofSize: 26)
-        button.setTitleColor(.white, for: .normal)
-        button.setBackgroundImage(UIImage(named: "Buttons"), for: .normal)
-        button.layer.cornerRadius = 30
-        button.layer.masksToBounds = true
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.3
-        button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.layer.shadowRadius = 6
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(openSettings), for: .touchUpInside)
-        return button
-    }()
-
+    
     private let statsButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Статистика", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Bold", size: 26) ?? UIFont.boldSystemFont(ofSize: 26)
-        button.setTitleColor(.white, for: .normal)
-        button.setBackgroundImage(UIImage(named: "Buttons"), for: .normal)
-        button.layer.cornerRadius = 30
-        button.layer.masksToBounds = true
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.3
-        button.layer.shadowOffset = CGSize(width: 0, height: 4)
-        button.layer.shadowRadius = 6
+        button.setImage(UIImage(systemName: "chart.bar.fill"), for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        button.layer.cornerRadius = 20
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(openStats), for: .touchUpInside)
+        button.addTarget(self, action: #selector(openStatistics), for: .touchUpInside)
         return button
     }()
-
-    // MARK: - Lifecycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBackground()
         setupUI()
-        animateElements()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
-
-    // MARK: - Setup UI
-
+    
     private func setupBackground() {
         view.addSubview(backgroundImageView)
         NSLayoutConstraint.activate([
@@ -143,92 +81,102 @@ class MainMenuViewController: UIViewController {
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
-
+    
     private func setupUI() {
         view.addSubview(titleLabel)
-        view.addSubview(logoGameImageView)
         view.addSubview(startButton)
         view.addSubview(levelSelectButton)
         view.addSubview(settingsButton)
+        view.addSubview(infoButton)
         view.addSubview(statsButton)
-
+        
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-
-            logoGameImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoGameImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0),
-            logoGameImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-            logoGameImageView.heightAnchor.constraint(equalToConstant: 300),
-
+            
             startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            startButton.topAnchor.constraint(equalTo: logoGameImageView.bottomAnchor, constant: 20),
-            startButton.widthAnchor.constraint(equalToConstant: 320),
-            startButton.heightAnchor.constraint(equalToConstant: 80),
-
+            startButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 70),
+            startButton.widthAnchor.constraint(equalToConstant: 280),
+            startButton.heightAnchor.constraint(equalToConstant: 200),
+            
             levelSelectButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            levelSelectButton.topAnchor.constraint(equalTo: startButton.bottomAnchor, constant: 20),
-            levelSelectButton.widthAnchor.constraint(equalToConstant: 320),
-            levelSelectButton.heightAnchor.constraint(equalToConstant: 80),
-
+            levelSelectButton.topAnchor.constraint(equalTo: startButton.bottomAnchor, constant: 10),
+            levelSelectButton.widthAnchor.constraint(equalToConstant: 280),
+            levelSelectButton.heightAnchor.constraint(equalToConstant: 200),
+            
             settingsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            settingsButton.topAnchor.constraint(equalTo: levelSelectButton.bottomAnchor, constant: 20),
-            settingsButton.widthAnchor.constraint(equalToConstant: 320),
-            settingsButton.heightAnchor.constraint(equalToConstant: 80),
-
-            statsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            statsButton.topAnchor.constraint(equalTo: settingsButton.bottomAnchor, constant: 20),
-            statsButton.widthAnchor.constraint(equalToConstant: 320),
-            statsButton.heightAnchor.constraint(equalToConstant: 80),
-
-
+            settingsButton.topAnchor.constraint(equalTo: levelSelectButton.bottomAnchor, constant: 10),
+            settingsButton.widthAnchor.constraint(equalToConstant: 280),
+            settingsButton.heightAnchor.constraint(equalToConstant: 200),
+            
+            infoButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            infoButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            infoButton.widthAnchor.constraint(equalToConstant: 40),
+            infoButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            statsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            statsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            statsButton.widthAnchor.constraint(equalToConstant: 40),
+            statsButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
-
+    
+    private static func makeMenuButton(named imageName: String, action: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setBackgroundImage(UIImage(named: imageName), for: .normal)
+        button.layer.cornerRadius = 30
+        button.layer.masksToBounds = true
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowOffset = CGSize(width: 0, height: 4)
+        button.layer.shadowRadius = 6
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(nil, action: action, for: .touchUpInside)
+        return button
+    }
+    
     // MARK: - Actions
-
+    
     @objc private func startGame() {
         let gameVC = GameViewController()
         navigationController?.pushViewController(gameVC, animated: false)
     }
-
+    
     @objc private func openLevelSelect() {
         let levelVC = LevelSelectViewController()
         navigationController?.pushViewController(levelVC, animated: false)
     }
-
+    
     @objc private func openSettings() {
         let settingsVC = SettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: false)
     }
-
-    @objc private func openStats() {
-        let statsVC = StatsViewController()
-        navigationController?.pushViewController(statsVC, animated: false)
-    }
-
+    
     @objc private func openRules() {
         let rulesVC = RulesViewController()
         navigationController?.pushViewController(rulesVC, animated: false)
     }
-
-
-    // MARK: - Animations
-
-    private func animateElements() {
-        let elements = [titleLabel, logoGameImageView, startButton, levelSelectButton, settingsButton, statsButton, ]
-        for (index, element) in elements.enumerated() {
-            element.alpha = 0
-            element.transform = CGAffineTransform(translationX: 0, y: 20).scaledBy(x: 0.9, y: 0.9)
-            UIView.animate(withDuration: 0.6,
-                           delay: 0.1 * Double(index),
-                           usingSpringWithDamping: 0.7,
-                           initialSpringVelocity: 0.7,
-                           options: .curveEaseOut,
-                           animations: {
-                element.alpha = 1
-                element.transform = .identity
-            })
-        }
+    
+    @objc private func openStatistics() {
+        let statsVC = StatisticsViewController()
+        navigationController?.pushViewController(statsVC, animated: true)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        startWiggleAnimation(for: startButton)
+        startWiggleAnimation(for: levelSelectButton, delay: 0.2)
+        startWiggleAnimation(for: settingsButton, delay: 0.4)
+    }
+    
+    private func startWiggleAnimation(for button: UIView, delay: TimeInterval = 0) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.y")
+        animation.values = [0, -4, 0, 4, 0]
+        animation.keyTimes = [0, 0.25, 0.5, 0.75, 1]
+        animation.duration = 2.0
+        animation.repeatCount = .infinity
+        animation.beginTime = CACurrentMediaTime() + delay
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        button.layer.add(animation, forKey: "wiggle")
     }
 }
